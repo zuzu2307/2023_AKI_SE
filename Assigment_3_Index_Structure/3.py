@@ -1,7 +1,7 @@
 from sklearn.datasets import fetch_20newsgroups
 from collections import defaultdict
 
-news = fetch_20newsgroups(subset='all')
+news = fetch_20newsgroups(subset="all")
 
 news_data = news.data
 
@@ -27,7 +27,7 @@ def search(keyword, data_set):
     return data_set[keyword]
 
 
-query = 'university'
+query = "university"
 doc_ids = search(query, index_set)
 
 print(doc_ids)
