@@ -27,9 +27,9 @@ related_docs_indices = cosine_similarities.argsort()[
 limit = 5
 
 print(f"\nMost {limit} similar documents to document #{input_index}:")
-# Skipping the first result since it's the input document itself
+# skipping the first result since it's the input document itself
 for i, index in enumerate(related_docs_indices[1:], start=1):
-    if i > limit:  # Let's show top 5 matches
+    if i > limit:  # let's show top limited matches
         break
     print("---------------------------------------------------------------------------------")
     print(
