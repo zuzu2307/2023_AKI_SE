@@ -1,34 +1,32 @@
-from matplotlib import pyplot as plt
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.feature_extraction.text import TfidfVectorizer
-from scipy.cluster.hierarchy import dendrogram, linkage
+from sklearn.cluster import KMeans
+from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import adjusted_rand_score
-from scipy.cluster.hierarchy import fcluster
 
-newsgroups = fetch_20newsgroups(subset='all', remove=('headers', 'footers', 'quotes'))
+newsgroups = fetch_20newsgroups(
+    subset='all', remove=('headers', 'footers', 'quotes'))
 
 X = newsgroups.data
-y = newsgroups.target
+y = newsgroups.target[:1000]
 
 vectorizer = TfidfVectorizer(stop_words='english', max_features=1000)
-X_vectorized = vectorizer.fit_transform(X).toarray()
+X_vectorized = vectorizer.fit_transform(X).toarray()[:1000]
 
-linkage_type = 'ward'
+km = KMeans(n_clusters=20)  
+y_pred = km.fit_predict(X_vectorized)
 
+linkage_types = ['ward', 'complete', 'average', 'single']
 
-print(f"Using linkage type: {linkage_type}")
-linked = linkage(X_vectorized, method=linkage_type)
+for linkage_type in linkage_types:
+    
+    print(f"\nUsing linkage type: {linkage_type}")
+    model = AgglomerativeClustering(
+        n_clusters = 20,  
+        linkage = linkage_type  
+    )
+    clustering = model.fit(X_vectorized)
 
-max_d = 50  
-cluster_labels = fcluster(linked, max_d, criterion='distance')
-assert len(cluster_labels) == len(y), "Mismatch in number of cluster labels and original labels"
-
-ari_score = adjusted_rand_score(y, cluster_labels)
-print(f"Adjusted Rand Index for {linkage_type} linkage: {ari_score}")
-
-# plotting graph
-plt.figure(figsize=(10, 7))
-dendrogram(linked, truncate_mode='level', p=3) 
-plt.title(f"Dendrogram ({linkage_type})")
-plt.show()
-
+    # use adjusted_rand_score to compare the clustering labels to the ground truth class labels
+    ari_score = adjusted_rand_score(y, clustering.labels_)
+    print(f"Adjusted Rand Index for {linkage_type} linkage: {ari_score}")
