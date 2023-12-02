@@ -10,3 +10,5 @@ from sklearn.ensemble import RandomForestRegressor
 import mglearn
 import pandas as pd
 
+citibike = mglearn.datasets.load_citibike().resample("1h").sum().fillna(0)
+print("City Bike :\n{}".format(citibike))
